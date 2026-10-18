@@ -1,4 +1,4 @@
-﻿{
+{
     "description":  "Self-contained repository containing the full reviewed manuscript (qwkit_software_paper.pdf), LaTeX source, qwkit v0.7.0 simulation engine, automated mathematical verification test suite (69 tests), and reproduction scripts/JSON datasets for: qwkit: an open, tested Python toolkit for quantum-well intersubband optics, from self-consistent states to saturated waveguide conversion",
     "upload_type":  "software",
     "creators":  [
