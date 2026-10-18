@@ -1,0 +1,8 @@
+{
+ "sc_chi2_per_point_s": 0.3905672073364258,
+ "sc_solution_s": 0.43245577812194824,
+ "rate_matrix_triple_well_s": 0.015550374984741211,
+ "rate_matrix_ADQW_s": 0.0025827884674072266,
+ "propagation_500um_s": 0.14537763595581055,
+ "propagation_500um_steps": 683
+}

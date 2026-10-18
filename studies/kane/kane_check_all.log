@@ -1,0 +1,7 @@
+ADQW 58/14/34        localized 4 | overlap one-band 0.036 two-band 3.9e-05 | z12 18.93/18.91 z23 -18.06/-18.03 z13 10.42/10.38 | product ratio 0.9937 | peak chi2 ratio 0.9982
+ADQW 64/10/29        localized 4 | overlap one-band 0.040 two-band 2.9e-05 | z12 19.33/19.31 z23 -24.18/-24.16 z13 8.24/8.21 | product ratio 0.9939 | peak chi2 ratio 0.9943
+ADQW 64.5/18/36.5    localized 5 | overlap one-band 0.052 two-band 2.3e-05 | z12 15.92/15.90 z23 -16.10/-16.09 z13 13.43/13.39 | product ratio 0.9950 | peak chi2 ratio 0.9981
+ADQW 70/12/32        localized 5 | overlap one-band 0.067 two-band 1.4e-05 | z12 18.89/18.86 z23 -24.76/-24.74 z13 10.50/10.47 | product ratio 0.9951 | peak chi2 ratio 0.9953
+TW 58/14/34/14/58    localized 7 | overlap one-band 0.059 two-band 4.9e-06 | z12 -55.71/55.69 z23 25.03/-25.02 z13 0.00/-0.00 | product ratio -13.2923 | peak chi2 ratio 8.3108
+ADQW 50/15/30        localized 4 | overlap one-band 0.044 two-band 7.0e-05 | z12 17.89/17.87 z23 -16.40/-16.37 z13 9.43/9.38 | product ratio 0.9922 | peak chi2 ratio 0.9980
+ADQW 62/20/29        localized 4 | overlap one-band 0.052 two-band 3.0e-05 | z12 12.67/12.64 z23 -17.34/-17.33 z13 13.29/13.24 | product ratio 0.9942 | peak chi2 ratio 0.9943

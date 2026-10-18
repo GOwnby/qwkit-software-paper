@@ -1,0 +1,260 @@
+\begin{thebibliography}{36}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Fejer et~al.(1989)Fejer, Yoo, Byer, Harwit, and Harris]{Fejer1989}
+M.~M. Fejer, S.~J.~B. Yoo, R.~L. Byer, A.~Harwit, and J.~S. Harris, Jr.
+\newblock Observation of extremely large quadratic susceptibility at 9.6--10.8
+  $\mu$m in electric-field-biased {AlGaAs} quantum wells.
+\newblock \emph{Phys. Rev. Lett.}, 62:\penalty0 1041, 1989.
+\newblock \doi{10.1103/PhysRevLett.62.1041}.
+
+\bibitem[Rosencher and Bois(1991)]{Rosencher1991}
+E.~Rosencher and Ph. Bois.
+\newblock Model system for optical nonlinearities: Asymmetric quantum wells.
+\newblock \emph{Phys. Rev. B}, 44:\penalty0 11315, 1991.
+\newblock \doi{10.1103/PhysRevB.44.11315}.
+
+\bibitem[Vurgaftman et~al.(2021)Vurgaftman, Lumb, and Meyer]{Vurgaftman2021}
+I.~Vurgaftman, M.~P. Lumb, and J.~R. Meyer.
+\newblock \emph{Bands and Photons in {III--V} Semiconductor Quantum
+  Structures}.
+\newblock Oxford University Press, Oxford, 2021.
+\newblock \doi{10.1093/oso/9780198767275.001.0001}.
+
+\bibitem[Belkin et~al.(2007)Belkin, Capasso, Belyanin, Sivco, Cho, Oakley,
+  Vineis, and Turner]{Belkin2007}
+M.~A. Belkin, F.~Capasso, A.~Belyanin, D.~L. Sivco, A.~Y. Cho, D.~C. Oakley,
+  C.~J. Vineis, and G.~W. Turner.
+\newblock Terahertz quantum-cascade-laser source based on intracavity
+  difference-frequency generation.
+\newblock \emph{Nat. Photonics}, 1:\penalty0 288, 2007.
+\newblock \doi{10.1038/nphoton.2007.70}.
+
+\bibitem[Lee et~al.(2014)Lee, Tymchenko, Argyropoulos, Chen, Lu, Demmerle,
+  Boehm, Amann, Al{\`u}, and Belkin]{Lee2014}
+J.~Lee, M.~Tymchenko, C.~Argyropoulos, P.-Y. Chen, F.~Lu, F.~Demmerle,
+  G.~Boehm, M.-C. Amann, A.~Al{\`u}, and M.~A. Belkin.
+\newblock Giant nonlinear response from plasmonic metasurfaces coupled to
+  intersubband transitions.
+\newblock \emph{Nature}, 511:\penalty0 65, 2014.
+\newblock \doi{10.1038/nature13455}.
+
+\bibitem[Yu et~al.(2022)Yu, Park, Hwang, Kim, Demmerle, Boehm, Amann, Belkin,
+  and Lee]{Yu2022}
+J.~Yu, S.~Park, I.~Hwang, D.~Kim, F.~Demmerle, G.~Boehm, M.-C. Amann, M.~A.
+  Belkin, and J.~Lee.
+\newblock Electrically tunable nonlinear polaritonic metasurface.
+\newblock \emph{Nat. Photonics}, 16:\penalty0 72, 2022.
+\newblock \doi{10.1038/s41566-021-00923-7}.
+
+\bibitem[Chesi et~al.(2023)Chesi, Falcone, Calcaterra, Virgilio, and
+  Frigerio]{Chesi2023}
+G.~Chesi, V.~Falcone, S.~Calcaterra, M.~Virgilio, and J.~Frigerio.
+\newblock Modelling second harmonic generation at mid-infrared frequencies in
+  waveguide integrated {Ge/SiGe} quantum wells.
+\newblock \emph{Opt. Express}, 31:\penalty0 17098, 2023.
+\newblock \doi{10.1364/OE.483888}.
+
+\bibitem[Ownby(2026{\natexlab{a}})]{Ownby2026N1}
+G.~Ownby.
+\newblock Electrically reversible asymmetric quantum wells for sign-reversal
+  quasi-phase matching of intersubband second-harmonic generation.
+\newblock Manuscript in preparation, 2026{\natexlab{a}}.
+
+\bibitem[Birner et~al.(2007)Birner, Zibold, Andlauer, Kubis, Sabathil,
+  Trellakis, and Vogl]{Birner2007}
+S.~Birner, T.~Zibold, T.~Andlauer, T.~Kubis, M.~Sabathil, A.~Trellakis, and
+  P.~Vogl.
+\newblock nextnano: General purpose 3-{D} simulations.
+\newblock \emph{IEEE Trans. Electron Devices}, 54:\penalty0 2137, 2007.
+
+\bibitem[Hebal et~al.(2021)Hebal, Koziol, Lisesivdin, and Steed]{Hebal2021}
+H.~Hebal, Z.~Koziol, S.~B. Lisesivdin, and R.~Steed.
+\newblock General-purpose open-source {1D} self-consistent
+  {Schr\"odinger--Poisson} solver: {Aestimo 1D}.
+\newblock \emph{Comput. Mater. Sci.}, 186, 2021.
+\newblock \doi{10.1016/j.commatsci.2020.110015}.
+
+\bibitem[Beugeling et~al.(2025)Beugeling, Bayer, Berger, B{\"o}ttcher, Bovkun,
+  Fuchs, Hofer, Shamim, Siebert, Wang, Hankiewicz, Kie{\ss}ling, Buhmann, and
+  Molenkamp]{Beugeling2025}
+W.~Beugeling, F.~Bayer, C.~Berger, J.~B{\"o}ttcher, L.~Bovkun, C.~Fuchs,
+  M.~Hofer, S.~Shamim, M.~Siebert, L.-X. Wang, E.~M. Hankiewicz,
+  T.~Kie{\ss}ling, H.~Buhmann, and L.~W. Molenkamp.
+\newblock kdotpy: $\mathbf{k}\cdot\mathbf{p}$ theory on a lattice for
+  simulating semiconductor band structures.
+\newblock \emph{SciPost Phys. Codebases}, 47, 2025.
+\newblock \doi{10.21468/SciPostPhysCodeb.47}.
+
+\bibitem[{Gmachl Group, Princeton University}(2026)]{ErwinJr2}
+{Gmachl Group, Princeton University}.
+\newblock {ErwinJr2}: a quantum cascade laser design tool.
+\newblock \url{https://erwinjr2.readthedocs.io}, 2026.
+\newblock Accessed 10 October 2026.
+
+\bibitem[Alonso-{\'A}lvarez et~al.(2018)Alonso-{\'A}lvarez, Wilson, Pearce,
+  F{\"u}hrer, Farrell, and Ekins-Daukes]{AlonsoAlvarez2018}
+D.~Alonso-{\'A}lvarez, T.~Wilson, P.~Pearce, M.~F{\"u}hrer, D.~Farrell, and
+  N.~Ekins-Daukes.
+\newblock Solcore: a multi-scale, {Python}-based library for modelling solar
+  cells and semiconductor materials.
+\newblock \emph{J. Comput. Electron.}, 2018.
+\newblock \doi{10.1007/s10825-018-1171-3}.
+
+\bibitem[Gaury et~al.(2019)Gaury, Sun, Bermel, and Haney]{Gaury2019}
+B.~Gaury, Y.~Sun, P.~Bermel, and P.~M. Haney.
+\newblock Sesame: a 2-dimensional solar cell modeling tool.
+\newblock \emph{Sol. Energy Mater. Sol. Cells}, 198, 2019.
+\newblock \doi{10.1016/j.solmat.2019.03.037}.
+
+\bibitem[nex(2026)]{nextnanoBench}
+Scattering times for electrons in unbiased and biased single and multiple
+  quantum wells.
+\newblock nextnano++ online tutorial,
+  \url{https://www.nextnano.com/docu/nextnanoplus/tutorials/1D_electron_scattering_QW.html},
+  2026.
+\newblock Accessed 10 October 2026.
+
+\bibitem[BenDaniel and Duke(1966)]{BenDaniel1966}
+D.~J. BenDaniel and C.~B. Duke.
+\newblock Space-charge effects on electron tunneling.
+\newblock \emph{Phys. Rev.}, 152:\penalty0 683, 1966.
+\newblock \doi{10.1103/PhysRev.152.683}.
+
+\bibitem[Nelson et~al.(1987)Nelson, Miller, and Kleinman]{Nelson1987}
+D.~F. Nelson, R.~C. Miller, and D.~A. Kleinman.
+\newblock Band nonparabolicity effects in semiconductor quantum wells.
+\newblock \emph{Phys. Rev. B}, 35:\penalty0 7770, 1987.
+\newblock \doi{10.1103/PhysRevB.35.7770}.
+
+\bibitem[Vurgaftman et~al.(2001)Vurgaftman, Meyer, and
+  Ram-Mohan]{Vurgaftman2001}
+I.~Vurgaftman, J.~R. Meyer, and L.~R. Ram-Mohan.
+\newblock Band parameters for {III--V} compound semiconductors and their
+  alloys.
+\newblock \emph{J. Appl. Phys.}, 89:\penalty0 5815, 2001.
+\newblock \doi{10.1063/1.1368156}.
+
+\bibitem[L{\"o}wdin(1950)]{Lowdin1950}
+P.-O. L{\"o}wdin.
+\newblock On the non-orthogonality problem connected with the use of atomic
+  wave functions in the theory of molecules and crystals.
+\newblock \emph{J. Chem. Phys.}, 18:\penalty0 365, 1950.
+\newblock \doi{10.1063/1.1747632}.
+
+\bibitem[Ando et~al.(1982)Ando, Fowler, and Stern]{Ando1982}
+T.~Ando, A.~B. Fowler, and F.~Stern.
+\newblock Electronic properties of two-dimensional systems.
+\newblock \emph{Rev. Mod. Phys.}, 54:\penalty0 437, 1982.
+\newblock \doi{10.1103/RevModPhys.54.437}.
+
+\bibitem[Boyd(2008)]{Boyd2008}
+R.~W. Boyd.
+\newblock \emph{Nonlinear Optics}.
+\newblock Academic Press, Burlington, MA, 3rd edition, 2008.
+
+\bibitem[Ferreira and Bastard(1989)]{Ferreira1989}
+R.~Ferreira and G.~Bastard.
+\newblock Evaluation of some scattering times for electrons in unbiased and
+  biased single- and multiple-quantum-well structures.
+\newblock \emph{Phys. Rev. B}, 40:\penalty0 1074, 1989.
+\newblock \doi{10.1103/PhysRevB.40.1074}.
+
+\bibitem[Pettit and Turner(1965)]{Pettit1965}
+G.~D. Pettit and W.~J. Turner.
+\newblock Refractive index of {InP}.
+\newblock \emph{J. Appl. Phys.}, 36:\penalty0 2081, 1965.
+\newblock \doi{10.1063/1.1714410}.
+
+\bibitem[Ordal et~al.(1985)Ordal, Bell, Alexander, Long, and Querry]{Ordal1985}
+M.~A. Ordal, R.~J. Bell, R.~W. Alexander, Jr., L.~L. Long, and M.~R. Querry.
+\newblock Optical properties of fourteen metals in the infrared and far
+  infrared: {Al, Co, Cu, Au, Fe, Pb, Mo, Ni, Pd, Pt, Ag, Ti, V}, and {W}.
+\newblock \emph{Appl. Opt.}, 24:\penalty0 4493, 1985.
+\newblock \doi{10.1364/AO.24.004493}.
+
+\bibitem[Fejer et~al.(1992)Fejer, Magel, Jundt, and Byer]{Fejer1992}
+M.~M. Fejer, G.~A. Magel, D.~H. Jundt, and R.~L. Byer.
+\newblock Quasi-phase-matched second harmonic generation: tuning and
+  tolerances.
+\newblock \emph{IEEE J. Quantum Electron.}, 28:\penalty0 2631, 1992.
+
+\bibitem[Siggia and Kwok(1970)]{SiggiaKwok1970}
+E.~D. Siggia and P.~C. Kwok.
+\newblock Properties of electrons in semiconductor inversion layers with many
+  occupied electric subbands. {I}. {S}creening and impurity scattering.
+\newblock \emph{Phys. Rev. B}, 2:\penalty0 1024--1036, 1970.
+\newblock \doi{10.1103/PhysRevB.2.1024}.
+
+\bibitem[Sirtori et~al.(1994)Sirtori, Capasso, Faist, and
+  Scandolo]{Sirtori1994}
+C.~Sirtori, F.~Capasso, J.~Faist, and S.~Scandolo.
+\newblock Nonparabolicity and a sum rule associated with bound-to-bound and
+  bound-to-continuum intersubband transitions in quantum wells.
+\newblock \emph{Phys. Rev. B}, 50:\penalty0 8663, 1994.
+\newblock \doi{10.1103/PhysRevB.50.8663}.
+
+\bibitem[Ownby(2026{\natexlab{b}})]{OwnbyMETH01}
+G.~Ownby.
+\newblock Dipoles of nonparabolic quantum-well states: why orthonormalizing the
+  bound states is not enough.
+\newblock Manuscript in preparation, 2026{\natexlab{b}}.
+
+\bibitem[Ownby(2026{\natexlab{c}})]{OwnbyNL02}
+G.~Ownby.
+\newblock Rabi-frequency bound and saturation limits of resonant intersubband
+  second-harmonic generation in waveguides and thin films.
+\newblock Manuscript in preparation, 2026{\natexlab{c}}.
+
+\bibitem[Ownby(2026{\natexlab{d}})]{OwnbyNL05}
+G.~Ownby.
+\newblock Depolarization beyond energy shifts: pathway factors, multisubband
+  coupling and dynamic screening in resonant intersubband second-harmonic
+  generation.
+\newblock Manuscript in preparation, 2026{\natexlab{d}}.
+
+\bibitem[Ownby(2026{\natexlab{e}})]{OwnbyTPV05}
+G.~Ownby.
+\newblock Temperature limits of bias-switchable intersubband thermal emitters
+  and their use in low-temperature thermophotovoltaics.
+\newblock Manuscript in preparation, 2026{\natexlab{e}}.
+
+\bibitem[Ownby(2026{\natexlab{f}})]{OwnbyMAT01}
+G.~Ownby.
+\newblock Intersubband optics of the polar {LaInO$_3$/BaSnO$_3$}
+  two-dimensional electron gas: fragmented hybrid plasmons, phonon-limited
+  lifetimes, intrinsic second-order nonlinearity and the limits of electrolyte
+  gating.
+\newblock Manuscript in preparation, 2026{\natexlab{f}}.
+
+\bibitem[Ownby(2026{\natexlab{g}})]{OwnbyMAT02}
+G.~Ownby.
+\newblock Where the gate charge must sit: electrostatic limits of electrolyte
+  gating at the {LaInO$_3$/BaSnO$_3$} interface and their intersubband
+  signature.
+\newblock Manuscript in preparation, 2026{\natexlab{g}}.
+
+\bibitem[Ownby(2026{\natexlab{h}})]{OwnbyMAT03}
+G.~Ownby.
+\newblock Immobile electrons at frozen gate charge: what the transport data of
+  electrolyte-gated {LaInO$_3$/BaSnO$_3$} allow.
+\newblock Manuscript in preparation, 2026{\natexlab{h}}.
+
+\bibitem[Ownby(2026{\natexlab{i}})]{OwnbyMS02}
+G.~Ownby.
+\newblock Implicit-differentiation sensitivities of a self-consistent
+  intersubband model: uncertainty quantification and growth-tolerant design of
+  quantum-well second-harmonic generators.
+\newblock Manuscript in preparation, 2026{\natexlab{i}}.
+
+\bibitem[Ownby(2026{\natexlab{j}})]{OwnbyN2}
+G.~Ownby.
+\newblock Electrically programmable intersubband second-harmonic gratings:
+  synthesis under saturation, fringing fields and tuning.
+\newblock Manuscript in preparation, 2026{\natexlab{j}}.
+
+\end{thebibliography}

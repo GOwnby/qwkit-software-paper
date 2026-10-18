@@ -1,0 +1,659 @@
+qwkit: an open, tested Python toolkit for quantum-well intersubband
+optics, from self-consistent states to saturated waveguide conversion
+                                                 Gracen Ownby
+
+                           University of Oklahoma, Norman, Oklahoma, USA
+
+
+                                                  14 October 2026
+
+
+
+                                                      Abstract
+
+          qwkit is a small, open-source Python package (MIT license) that computes the optical response of
+      doped semiconductor quantum wells to infrared light, from the electron states of a layered structure to
+      the harmonic power generated in a waveguide. Its core chains six calculations that are usually done
+      with separate in-house codes: self-consistent Schrödinger–Poisson states with band nonparabolicity
+      and depolarization; the resonant second-order susceptibility χ (2) for arbitrary subband populations; LO-
+      phonon intersubband scattering rates; multilevel saturation; planar waveguide modes and electrode fields;
+      and coupled-mode propagation with pump depletion and quasi-phase matching. Five further modules
+      add exact parameter sensitivities of the self-consistent model by implicit differentiation; the collective
+      (time-dependent Hartree, random-phase) linear and second-order response, with and without in-plane
+      dispersion; the two-dimensional electron gas at a single polar heterointerface; and intersubband thermal
+      emitters at elevated temperature. Each module is checked by automated tests against analytic limits, exact
+      symmetries, conservation laws or a published value (58 tests). The package has been used for a complete
+      design study of electrically reversible quasi-phase matching in symmetric triple quantum wells, whose
+      every number and figure it regenerates, and for six companion studies. The whole chain, from layer list to
+      conversion efficiency, runs in under ten seconds on one processor core, most of it in the waveguide mode
+      solver.
+
+
+1    Summary
+Electrons confined in quantum wells (QWs) a few nanometres thick occupy discrete subbands, and transitions
+between them, intersubband (ISB) transitions, can be placed anywhere in the mid- and far-infrared by choosing
+layer thicknesses. Coupling two or three such transitions resonantly with a pump and its harmonic produces
+second-order nonlinearities χ (2) that exceed those of bulk crystals by orders of magnitude [1–3]. These
+nonlinearities drive difference-frequency terahertz sources in quantum cascade lasers [4], giant and electrically
+tunable nonlinear metasurfaces [5, 6], and waveguide frequency converters [7]. Predicting what a given
+structure will do requires a chain of calculations: subband states in the structure’s own electrostatic potential,
+collective (depolarization) shifts of the transitions, the susceptibility for the actual subband populations, how
+fast excited electrons relax, how the populations saturate under strong pumping, how the light is confined in a
+waveguide, and how the harmonic builds up along it.
+
+
+
+                                                          1
+    qwkit implements this chain, and the extensions described below, in about 2500 lines of documented
+Python that depend only on NumPy and SciPy. A user describes a structure as a list of layers, applies a
+field and a doping level, and obtains energies, dipoles, χ (2) , absorption, scattering rates, saturation curves,
+waveguide modes and conversion efficiencies, and, with the extension modules, parameter sensitivities,
+collective spectra and thermal emission spectra, all through plain functions and dictionaries that can be
+inspected at every stage.
+
+
+2    Statement of need
+Design studies of ISB nonlinear devices are often carried out with in-house codes, and the steps of the chain
+are frequently reported separately: a band-structure calculation in one paper, a susceptibility estimate in
+another, a propagation model with a single assumed relaxation time in a third. This makes results hard
+to reproduce and hides model choices that change conclusions. Three examples arose while developing
+the package. A susceptibility formula written with diagonal dipole elements measured from an arbitrary
+origin produces a spurious χ (2) in a perfectly symmetric structure. Replacing a common 1 ps relaxation
+time with level-resolved LO-phonon rates lowers absolute conversion efficiencies at watt-level pumping
+by factors of 1.3–1.8 at 1.26 W and 1.2–4.2 at 10 W, depending on the phase-matching scheme. And an
+“idealized” benchmark that keeps the on-state absorption in switched-off segments understates a competing,
+Stark-modulated quasi-phase-matching (QPM) scheme by 1.6–25 times at 1.26–20 W [8]. An open, tested
+implementation of the whole chain lets such choices be stated, varied and checked.
+    The intended users are researchers and students who design or interpret ISB absorbers, emitters, mod-
+ulators and nonlinear converters; those who want a transparent reference implementation of standard ISB
+formulas [3]; and those who need a fast, scriptable forward model, with exact derivatives, for optimization or
+uncertainty studies.
+
+
+3    State of the field
+Table 1 compares qwkit with widely used open and commercial codes for semiconductor heterostructures,
+as their authors describe them. General-purpose packages solve the Schrödinger–Poisson problem in one
+to three dimensions with multiband k · p models [9–11]; quantum-cascade-laser tools design laser active
+regions [12]; and solar-cell libraries couple QW absorption to device transport [13, 14]. As far as their
+publications and documentation describe, none of the open codes combines depolarization-shifted transitions,
+a population-resolved resonant χ (2) , LO-phonon relaxation, multilevel saturation, waveguide modes and
+saturable coupled-mode propagation in one tested chain. qwkit is deliberately narrower than the general-
+purpose codes: it is a one-dimensional, single-conduction-band code for the ISB optics of electron-doped
+structures (with a two-band Kane cross-check of its dipoles), and it does not replace multiband k · p or
+transport solvers.
+
+
+
+
+                                                       2
+               Table 1: Heterostructure codes as described by their authors, and the scope of qwkit.
+
+Code              Scope (from its publication or documentation)                                          Availability
+nextnano [9]      General-purpose 1D–3D Schrödinger–Poisson and k · p device simulation, in-             Proprietary
+                  cluding intersubband scattering times and absorption [15]
+Aestimo 1D [10]   1D self-consistent Schrödinger–Poisson, single-band or multiband k · p                 Open (GPL v3)
+kdotpy [11]       Kane-model k · p on a lattice for band structures                                      Open
+ErwinJr2 [12]     Quantum cascade laser design: 1D eigenstates, LO-phonon scattering, optical            Open
+                  gain and threshold current, transfer-matrix waveguide optics and confinement
+                  factor, with a GUI
+Solcore [13]      Multi-scale solar-cell modelling, including QW band structure and absorption           Open
+Sesame [14]       2D drift-diffusion solar-cell modelling                                                Open
+qwkit             1D one-band ISB optics: nonparabolic self-consistent states, depolarization, χ (2) ,   Open (MIT)
+                  LO-phonon rates, saturation, waveguide modes, electrode fields, coupled-mode
+                  SHG with QPM; implicit-differentiation sensitivities, collective (RPA) χ (1) and
+                  χ (2) , single-heterointerface 2DEG, ISB thermal emitters
+
+
+4      Software design
+4.1    Architecture
+The package has eleven modules (Fig. 1): six that form the chain from layer list to conversion efficiency, and
+five extensions that use the same states and conventions. Each is a set of plain functions operating on NumPy
+arrays and dictionaries, so any intermediate quantity can be inspected, modified or replaced. The few classes
+hold precomputed data: propagation.Medium holds a saturable medium built from a “state set” dictio-
+nary (energies, dipoles, shifted transition energies, populations, density), which sp.state_set produces
+from a self-consistent solution; tdh.TDH and krpa.KRPA hold the Hartree kernel and unperturbed density
+matrix of a response calculation; and sens.Model holds the parameter vector of the differentiable model.
+
+4.2    Physics and numerical choices
+States. The Schrödinger equation with the BenDaniel–Duke operator [16] and Kane nonparabolicity
+m∗ (z, E) = medge (z)[1 + (E − V (z))/Eg (z)] [17], with InGaAs/InAlAs band parameters from Ref. [18], is
+discretized on a cell-centred grid and solved with a tridiagonal eigensolver. Two choices make symmetric
+structures exactly symmetric numerically, which matters because a field-induced χ (2) is a small difference
+of large terms. First, no grid node sits on an interface, so mirror-symmetric stacks give mirror-symmetric
+matrices. Second, each nonparabolic state is found by index tracking: the k-th state satisfies E = the k-th
+eigenvalue of H(E), which preserves node counting, whereas matching states by nearest energy can swap or
+duplicate them. States from different energy-dependent Hamiltonians are not exactly orthogonal; they are
+Löwdin-orthonormalized [19], which preserves parity and changes them minimally, together with at least
+ten box states above the highest localized one (solved at the converged potential if needed), and only then
+truncated to the states a calculation keeps (core.lowdin_localized, used by sp.prepare; sens
+and thermal orthonormalize all their model states before selecting). The buffer matters when few states
+are localized: the topmost localized state cannot be orthogonalized against states left out of the set. As an
+exact alternative, core.kane_dipoles forms dipoles from the two-component states of the two-band
+
+
+                                                          3
+                sens                     interface
+                                                                     tdh, krpa                               thermal
+              implicit-                    single-       fn (k)
+                                                                  collective (RPA)                        ISB emitters at
+           differentiation            heterointerface
+                                                                      χ (1) , χ (2)                      300–1000 K, TPV
+            sensitivities                  2DEG
+                                                                      states                                      rates
+                                           core                           sp
+             Layer list,                                                                                    scattering
+                                       nonparabolic      states    self-consistent       states
+           field, doping,                                                                                LO-phonon rates,
+                                      states, dipoles,             potential, depo-
+            temperature                                                                                  detailed balance
+                                        populations                larization, χ (2)     sta
+                                                                                               te                 rates Rlm
+                                                                                                  se
+                                                                   χ (2) (F)                         t
+                                        waveguide                                                           propagation
+                                                                     electrodes
+                                        TM modes,                                          c1            saturable medium,
+                                                                  bias field, QPM
+                                       confinement,                                                        coupled-mode
+                                                                     coefficient
+                                       overlap, loss                                                        SHG, QPM
+
+                                                               neff , Γ, overlap, loss
+                                                                                                             Efficiency,
+                                                                                                         optimum length,
+                                                                                                         saturation curves
+
+Figure 1: Module structure and data flow. Solid boxes form the chain from layer list to conversion efficiency; dashed
+boxes are the extension modules. Each arrow is a plain array or dictionary passed from one module to the next; c1 is the
+QPM Fourier coefficient and Rlm the LO-phonon rate matrix.
+
+
+Kane model behind the energy-dependent mass (conduction envelope plus valence component), which are
+orthogonal without this step. The simulation box is closed by hard walls (ψ = 0 one grid step beyond each
+end), and core.localized separates the states of the active region from the continuum-like states of the
+padded box. Only the tracked eigenpair is computed at each iteration, and the energy-dependent mass is
+updated by a secant iteration.
+
+Electrostatics. For a voltage-biased periodic stack, the period-averaged field equals the applied field and the
+Hartree field has zero mean over a period. Poisson’s equation is solved with position-dependent permittivity
+using centred cumulative integrals (a forward sum breaks the symmetry at second order), and iterated with
+linear mixing and warm starts. Depolarization shifts follow Ando et al. [20], transition by transition, with a
+user-set average permittivity.
+
+Susceptibility. The resonant SHG susceptibility for arbitrary populations ρl is evaluated as the full density-
+matrix sum [2, 21]
+
+                           Ne3
+                                                                                       
+                  (2)                  zlm zmn znl        ρl − ρm           ρm − ρn
+                χ (2ω) =         ∑ Ẽnl − 2ℏω − iΓ Ẽml − ℏω − iΓ − Ẽnm − ℏω − iΓ ,
+                             ε0 l,m,n
+                                                                                                          (1)
+
+
+where N is the period-averaged electron density, ρl the fractional population of subband l (∑l ρl = 1), zlm the
+dipole matrix elements, Ẽml = −Ẽlm the depolarization-shifted transition energies and Γ the half-width at
+half-maximum. The sum is invariant under a shift of the coordinate origin and contains the permanent-dipole
+
+
+
+                                                           4
+terms automatically. Because χ (2) and the ISB absorption are linear in ρ, Medium precomputes them as
+coefficient vectors, so saturation can be re-evaluated at every propagation step at negligible cost.
+
+Relaxation and saturation. Intersubband LO-phonon rates use the Fröhlich interaction with bulk phonons
+                                                                                              ′
+for electrons at the subband minimum [22]; the form factor ψl ψm (z)ψl ψm (z′ )e−Q|z−z | dz dz′ is evaluated
+                                                               RR
+
+in O(N) operations with running exponential sums, and upward rates follow from detailed balance. For
+the extension modules, scattering also provides rates for several polar-phonon modes with per-mode
+Fröhlich weights and Thomas–Fermi screening, a static random-phase screening factor with Coulomb form
+factors, and k-resolved rates with an angular integral, a nonparabolic final density of states and Pauli blocking.
+Steady-state populations under pump and harmonic intensities solve a linear rate system in which either a
+single relaxation time or the level-resolved rate matrix returns the populations to equilibrium.
+
+Waveguide, electrodes and propagation. TM modes of planar multilayer guides with complex permit-
+tivities (InP dispersion [23], Drude free carriers, gold [24]) are found by finite differences for Hy . Fields
+under alternating-polarity electrodes come from a Fourier-series solution of Laplace’s equation for a uniform
+permittivity, and the QPM coefficient is the first Fourier component of χ (2) (F(x)) [25]. Mode amplitudes
+are propagated with fourth-order Runge–Kutta, including pump depletion, saturable losses and either a
+periodic QPM pattern (propagate) or a sequence of different media, each one coherence length long
+(propagate_segments), which describes Stark on/off QPM realistically.
+
+Sensitivities. sens gives exact first-order derivatives of the one-period self-consistent model with respect
+to layer thicknesses, field, doping, band offset, masses, nonparabolicity gaps and permittivities, by implicit
+differentiation of the converged Hartree fixed point. Interfaces are smoothed by an error function one grid
+cell wide, so every material profile is differentiable in the interface positions. State tangents follow from
+first-order perturbation theory of the nonparabolic eigenproblems at fixed total density. They are computed
+matrix-free: reduced resolvents are applied by shifted tridiagonal LU solves with projection and iterative
+refinement, and the Hartree feedback (I − K) δVH = b is solved by GMRES (typically five iterations), so
+neither a full eigendecomposition nor an explicit density-response matrix is formed (the dense route remains
+as an option and agrees to 10−8 ). The closed-form post-processing (Löwdin step over all model states, about
+ten more than are kept, then dipoles, depolarization shifts, χ (2) , absorption and a waveguide figure of merit)
+is differentiated along each tangent by Richardson-extrapolated central differences, on the most localized
+states rather than the lowest ones, so a delocalized box state is never selected.
+
+Collective response. tdh solves the density-matrix equations of one period with the time-dependent
+Hartree (random-phase) potential of the induced charge, the drive being referenced to the displacement field.
+It returns χ (1) and χ (2) by frequency-domain perturbation theory and integrates the full nonlinear response in
+real time (fourth-order Runge–Kutta). For two levels its kernel reproduces Ando’s depolarization shift, and
+without the kernel the density-matrix χ (2) above is recovered. krpa generalizes it from subband populations
+to Fermi occupations on in-plane wavevector shells with nonparabolic dispersions and a frequency-dependent
+(polar-phonon) background permittivity, for linear and second-order response; only pairs with an occupation
+difference carry first-order coherences, and an adiabatic local exchange–correlation kernel is optional. With a
+single shell it reduces exactly to tdh.
+
+
+
+                                                        5
+ from qwkit import sp, scattering, propagation
+ HW = 1.23984 / 10 # 10 um pump photon energy (eV)
+ TW = [(58, "well"), (14, "barrier"), (34, "well"), (14, "barrier"), (58, "well")]
+ o = sp.chi2_sc(TW, 55.0, HW, ns_cm2=5e11) # o["chi"]: chi(2) in pm/V
+ E, psi, Z, rho = sp.prepare(o["r"])
+ R = scattering.rate_matrix(o["r"]["z"], psi, E) # LO-phonon rates (1/s)
+ med = propagation.Medium(sp.state_set(o), HW, R=R) # saturable medium
+ wg = dict(n1=3.231, n2=3.338, G1=0.395, G2=0.514, O_um=0.0531, abg1_cm=3.25,
+        abg2_cm=0.16, t_stack_um=1.512, w_um=15.0, Lcoh_um=23.4, lam1_um=10.0)
+ # wg: from waveguide.tm_modes and shg_overlap; eta_e: QPM coefficient from electrodes
+ res = propagation.propagate(med, wg, 1.26, "sign", eta_e=0.92, L_max_um=500)
+ print(res["eta"], res["L_opt_um"]) # peak efficiency, length
+
+             Listing 1: From layers to conversion efficiency (abridged from docs/examples.py).
+
+
+
+Heterointerface and thermal emitters. interface computes the two-dimensional electron gas at a
+single polar heterointerface self-consistently: Kane-nonparabolic subbands with an in-plane dispersion and
+density of states consistent with the same Hamiltonian, Fermi-level pinning by compensating acceptors over a
+depletion layer, a positive sheet at the interface and the cap surface or a fixed interface sheet (electric-double-
+layer gating), an optional fixed ionized-donor density in the cap (for example oxygen vacancies created
+by an electrolyte) with the remaining positive charge placed on the cap surface, at the interface or in the
+donors, and optional Hedin–Lundqvist exchange–correlation, with Anderson mixing. thermal supplies
+temperature-dependent material data (Varshni gaps, Γ–L separations, L-valley masses), intrinsic densities,
+the self-consistent period at temperature with continuum states and an L-valley reservoir, ISB absorption
+with thermal populations and k-resolved in-plane nonparabolicity, LO-phonon linewidths, an Urbach-tail
+interband background, coupled-mode emissivity, generation leakage and two-surface thermophotovoltaic
+(TPV) detailed balance.
+
+4.3   Design trade-offs
+The package favours transparency and verifiability over generality. A one-band model with Kane nonparabol-
+icity describes conduction-band ISB transitions in narrow- and moderate-gap III–V wells well [17, 26] and
+makes every matrix element inspectable; valence-subband and interband problems are out of scope until
+a multiband module exists (thermal includes interband absorption only as a bulk Urbach tail). Plain
+functions and dictionaries were chosen over an object hierarchy so that a study can stop after any step, swap
+in a different model, and keep its inputs and outputs as JSON. Units are fixed per module (Å and eV in the
+state, interface and response solvers, pm/V for their χ (2) ; SI for media in propagation, with waveguide
+inputs in µm and cm−1 ; metres in electrodes) and are listed in the user guide. Steady-state rate equations
+assume pulses much longer than the picosecond relaxation times, and the waveguide is planar; both are stated
+limitations rather than hidden ones.
+
+
+5     Validation
+Each module is checked against independent references (Table 2); the 58 tests run in about 40 s on one
+core. Fig. 2 shows four of them. Subband energies of a finite InGaAs/InAlAs well agree with the analytic
+
+
+                                                        6
+BenDaniel–Duke solution to 0.04 meV on the default 0.5 Å grid, with second-order convergence (Fig. 2a).
+In a self-consistent mirror-symmetric triple well, |χ (2) (F) + χ (2) (−F)| stays below 4 × 10−11 |χ (2) | at every
+field (Fig. 2b), more than four orders of magnitude below the test tolerance. With the parameters of a
+published reproduction of Ferreira and Bastard’s calculation [15, 22] (m∗ = 0.07, conduction-band offset
+0.2138 eV, εs = 12.5, ℏωLO = 36 meV, T = 0; that source does not state ε∞ , for which we take 10.89), the
+LO-phonon emission time of a 10 nm GaAs well is 0.73 ps, against the published 0.83 ps (Fig. 2c). The 13%
+difference is of the size produced by plausible choices of ε∞ (a value of 11.07 reproduces 0.83 ps), so this test
+guards the magnitude of the rates rather than fixing their last digit. The coupled-mode solver reproduces the
+phase-mismatched sinc2 solution to 10−6 and the (2/π)2 factor of sign-reversal QPM (Fig. 2d), and, with 256
+steps per coherence length, conserves total power to 10−6 in a strongly depleted lossless case. The extension
+modules are checked in the same way: the sensitivities against central finite differences, including cells where
+the energy-dependent mass reaches its floor, and the matrix-free against the dense tangents; the collective
+response against the single-particle χ (2) , Ando’s shift and its own real-time integration; krpa against tdh;
+and the interface and thermal modules against closed-form densities, Gauss’s law, the Stefan–Boltzmann law
+and detailed-balance limits.
+    Corrections made after the first release change results slightly. The ends of the simulation box were
+zero-flux (Neumann) boundaries, although documented as hard walls; they are now Dirichlet (ψ = 0 one
+step beyond each end). Bound states of padded structures are unchanged (by less than 10−4 meV for 100 Å
+pads), while continuum-like box states shift and spurious states localized at the box edges disappear. The
+nonparabolic states are now Löwdin-orthonormalized together with at least ten box states above the localized
+ones before the basis is truncated. Orthonormalizing an already truncated set gave its topmost states spurious
+dipoles (up to 3% of the 1 → n oscillator strength in a capped basis of the heterointerface study), and so
+did orthonormalizing the localized states alone when only a few are localized: for the 64/10/29 Å double
+well in a 200 Å box, with three localized states, z13 came out 8.77 Å against 8.22 Å from the two-band
+Kane states, and |χ (2) | about 8% too large. The two-band Kane states provide this independent check of
+the Löwdin step: for six asymmetric double wells and the symmetric triple well at zero bias, the localized
+two-component states overlap by less than 10−4 (against 0.04–0.07 for the raw one-band states); with the
+buffered step the one-band dipoles agree with the Kane dipoles to within 0.7% and do not depend on the box
+size, and computing the peak ground-state χ (2) of the double wells with the Kane dipoles changes it by −0.2
+to −0.6%. The studies built on qwkit were re-run after these corrections.
+
+
+6    Research use and performance
+qwkit was built for, and used in, a complete design study of electrically reversible QPM in mirror-symmetric
+InGaAs/InAlAs triple quantum wells [8]. The study’s scripts, distributed with the package, regenerate
+every number and figure of that manuscript from the layer list: self-consistent model ladders and error
+budgets, LO-phonon-resolved saturation, waveguide and electrode design, and propagation comparisons
+against bipolar-biased, Stark-modulated and growth-reversed benchmarks. Fig. 3 shows three stages of
+that workflow. The extension modules were developed for six companion studies whose scripts are also
+distributed: saturation limits of resonant ISB second-harmonic generation [27], collective effects in the
+resonant χ (2) (tdh) [28], temperature limits of bias-switchable ISB thermal emitters (thermal) [29], ISB
+optics of the polar LaInO3 /BaSnO3 electron gas (interface, krpa) [30], electrolyte gating of the same
+interface (interface) [31], and sensitivities, uncertainty quantification and growth-tolerant design (sens)
+
+
+                                                        7
+Table 2: Automated validation tests in the version described here (58 tests, all pass). Quantities not yet covered by
+a dedicated test: free-carrier and metal losses in the waveguide, electrode fields with finite gaps, the WKB escape
+estimates, and the thermal emitter state and leakage.
+
+Quantity                      Reference and criterion
+Subband energies              Infinite well (energies within 1%, z12 within 2%); finite well with BenDaniel–Duke
+                              matching (0.1 meV, second-order convergence)
+Populations                   Two-dimensional Fermi–Dirac closed form (10−12 )
+States with nonparabolicity   Exact parity and strictly ordered energies; mirror-image structures give identical |zi j |
+                              under an origin shift (10−6 ); two-band Kane states orthogonal (2 × 10−3 ) with z12 within
+                              2% of the Löwdin value; buffered Löwdin dipoles of a double well with three localized
+                              states vs Kane dipoles (1.2%) and independent of the box size (1%)
+χ (2)                         Three-level textbook limit [3] (5%); translation invariance (10−9 ); χ (2) (0) = 0 and
+                              χ (2) (−F) = −χ (2) (F) for fixed and self-consistent potentials (10−6 )
+Electrostatics                Charged sheets vs analytic (1%); continuity of D across a dielectric interface and zero-
+                              mean field (10−6 ); neutrality and convergence (10−5 eV)
+Depolarization                Infinite-well shift vs closed-form S12 = 5L/9π 2 (10−4 ); blue shift for a populated ground
+                              state; vanishes as ns → 0
+LO-phonon rates               Form factor vs direct double sum (10−9 ) and short-range limit (1%); published GaAs
+                              benchmark (15%); detailed balance (10−6 ); multimode and k-resolved rates reduce to the
+                              single-mode band-edge rate (10−12 , 10−6 ); Pauli blocking and screening lower the rate
+Saturation                    Two-level limit (absorption halves at Isat ); cross-section scaling with refractive index;
+                              level-resolved equilibrium stationary, populations conserved
+Waveguide, electrodes         Symmetric slab TM0 index (2 × 10−4 ); mode normalization and confinement (10−9 );
+                              parallel-plate field (1%); QPM coefficients 2/π and 1/π (10−3 )
+Propagation                   Undepleted phase-matched limit (10−3 ); phase-mismatched sinc2 limit (10−6 ); power
+                              conservation (10−6 at 256 steps per coherence length); segmented media reproduce sign
+                              reversal (10−6 )
+Sensitivities                 Implicit derivatives vs central finite differences: energies (relative 2 × 10−4 ), states and
+                              occupations (10−3 ), and seven observables for all parameter types (2 × 10−3 ), also with
+                              the mass floor active; matrix-free vs dense tangents (10−8 )
+Collective response           Bare limit vs density-matrix χ (2) (1%); linear peak at the Ando energy (0.3 meV); real
+                              time vs second order (10−3 , 2 × 10−3 ); krpa with one shell, or with inactive pairs, vs
+                              tdh (10−9 for χ (1) , 10−8 for χ (2) ); shell occupations vs subband densities (2 × 10−3 );
+                              Fröhlich weights sum to 1/ε∞ − 1/εs (10−12 )
+Heterointerface               Subband densities vs Fermi–Dirac closed form (2 × 10−4 ) and degenerate nonparabolic
+                              limit (10−3 ); neutrality (10−6 ), flat potential beyond the depletion edge and Fermi-level
+                              pinning (5 meV); Hedin–Lundqvist potential (10−9 ); inverse in-plane dispersion; cap
+                              donors leave the subband spacing unchanged (Gauss’s law, 2 meV) and bend the cap
+                              band down; neutrality with the remaining positive charge in the donors or at the interface
+                              (106 cm−2 )
+Thermal emitters              Varshni gaps of GaAs and InGaAs (2 meV) and GaAs intrinsic density; Planck flux
+                              vs Stefan–Boltzmann (10−4 ); critical coupling gives unit emissivity (10−3 ); TPV effi-
+                              ciency below Carnot, narrowband emitter more efficient and less powerful; temperature-
+                              independent ISB line strength in the parabolic limit (2%)
+
+
+
+
+                                                           8
+                     (a)                                                                                                                      (b)
+                                          600                                                                                                  10−3
+
+
+
+
+                                                                                                     |χ (2) (F) + χ (2) (−F)| / |χ (2) (F)|
+                                                                          analytic (parabolic)
+
+        Subband energy (meV)
+                                                                          qwkit (parabolic)                                                                                                          test tolerance
+                                                                          qwkit (nonparabolic)                                                 10−6
+                                          400
+                                                                                                                                               10−9
+
+                                          200                                                                                                 10−12
+                                                                                                                                                            symmetric triple well, self-consistent
+
+                                                                                                                                              10     −15    |χ (2) | up to 64 nm/V
+                                           0
+                                                    50        75    100       125       150                                                                          20          40         60        80        100
+                                                               Well width (Å)                                                                                                  Field F (kV/cm)
+
+                                                                   published value
+                     (c)                                                                                                                      (d)
+                                                                   (10 nm, 0.83 ps)
+          τ21 , LO-phonon emission (ps)
+
+
+
+
+                                                                                                                                                     0.4
+
+
+
+
+                                                                                                                             SH power (normalized)
+                                          0.8                                                                                                                no QPM, ×103 (circles: sinc2 )
+                                                                                                                                                     0.3
+                                                                                                                                                           2.5
+
+                                          0.6                                                                                                        0.2   0.0
+                                                                                                                                                                 0         100        200
+
+                                          0.4                                                                                                        0.1                                         QPM, numerical
+                                                                                                                                                                                                 (2/π)2 envelope
+                                                                                                                                                     0.0
+                                                8        10        12       14          16                                                                  0             50          100         150           200
+                                                          GaAs well width (nm)                                                                                                   Distance (μm)
+
+Figure 2: Validation. (a) Subband energies of a finite InGaAs/InAlAs well (0.52 eV offset, masses 0.043/0.075) vs
+width: analytic BenDaniel–Duke solution (lines), qwkit with parabolic bands (circles) and with nonparabolicity (dashed).
+(b) Odd-symmetry residual of χ (2) in a self-consistent symmetric 58/14/34/14/58 Å triple well (ns = 5 × 1011 cm−2 ),
+with the test tolerance. (c) LO-phonon emission time of a GaAs/Al0.3 Ga0.7 As well vs width with the parameters stated
+in the text, and the published value. (d) Second-harmonic power along a lossless guide (Lcoh = 20 µm), normalized to
+the perfectly phase-matched power at 200 µm: sign-reversal QPM against its (2/π)2 envelope, and the unmatched case
+(inset, enlarged) against the analytic sinc2 solution.
+
+
+[32]. Developing the study, and an independent review of the package, exposed and fixed several subtle errors
+that the tests now guard against: spurious χ (2) in symmetric structures from grid asymmetry, state swapping
+and non-orthogonality; an asymmetric Hartree integral; a zero-mean condition imposed on the field rather
+than through the displacement, which broke continuity of D at dielectric interfaces (changing |χ (2) | by at
+most 0.1%); and a Runge–Kutta stage that sampled the next domain’s QPM sign at domain edges.
+    On one core of a 2.8 GHz Xeon, a self-consistent solution with seven states on a 0.5 Å grid takes about
+0.4 s, the LO-phonon rate matrix a few milliseconds, and a saturable, pump-depleted propagation over 500 µm
+(about 700 steps) about 0.15 s. The TM mode of the waveguide, a dense eigenproblem on a 0.02 µm grid,
+takes about 4 s per wavelength, and is needed once per waveguide design. The sensitivities of a self-consistent
+solution with respect to all 12–14 parameters of a double or triple well cost about a fifth of its forward solve
+(0.13–0.22 s). Parameter scans of thousands of designs are therefore practical on a workstation.
+
+
+
+
+                                                                                                 9
+               (a)   F = 55 kV/cm, |χ (2) | = 63.8 nm/V                     (b)                                                                         (c)
+                                                                            120
+                                                                                                 TW, LO rates                                           102          triple well, sign-reversal QPM
+               400
+
+
+
+
+                                                                                                                      Peak conversion efficiency (%)
+                                                                                                                                                                     ADQW, bipolar ±F
+                                                                            100                  TW, 1 ps
+                                                                                                                                                                     ADQW, Stark QPM
+                                                                                                 ADQW, LO rates                                         101
+               300                                                                                                                                                   ADQW, growth-reversed (ideal)
+Energy (meV)
+
+
+
+
+                                                     4                      80                   ADQW, 1 ps                                                          ADQW, perfect PM (bound)
+
+
+
+
+                                                          |χ (2) | (nm/V)
+               200                                                                                                                                      100
+                                                                            60
+                                                     3
+               100                                                          40                                                                         10−1
+                                                     2
+
+                0
+                                                     1                      20                                                                         10−2
+
+                                                                             0                                                                         10−3
+                          −10        0        10                                  10−2   10−1      100      101                                               10−2   10−1       100       101
+                                  z (nm)                                          Local pump intensity (MW/cm )   2                                                  Pump power (W)
+
+Figure 3: An end-to-end example at ns = 5 × 1011 cm−2 per period and a 10 µm pump. (a) Self-consistent conduction
+band and the densities of subbands 1–4 (bottom to top) of a 58/14/34/14/58 Å InGaAs/InAlAs triple well at 55 kV/cm.
+(b) |χ (2) | vs local pump intensity for the triple well (TW) and a 64/10/29 Å asymmetric double quantum well (ADQW),
+with LO-phonon rates and with a single 1 ps time. (c) Peak conversion efficiency vs pump power in the waveguide of
+Ref. [8] for the triple well with sign-reversal QPM at 55 kV/cm and four ADQW schemes (bipolar bias ±F and Stark
+QPM, each with optimized fields; ideal growth-defined reversal; perfect phase matching), from that study’s distributed
+outputs.
+
+
+ 7              Limitations and development plan
+ qwkit treats conduction-band ISB physics in one dimension with a single band; the two-band Kane states
+ serve only as a cross-check of the dipoles. Three of the extensions planned at the first release are now included:
+ thermal subband populations and linewidths for high-temperature ISB emitters (thermal), exact derivatives
+ for gradient-based design under growth tolerances (sens), and a collective (multisubband-plasmon) response
+ beyond first-order depolarization (tdh, krpa). The next planned extension is an interband and carrier-escape
+ module (hole subbands, interband absorption, tunnelling and thermionic escape) for QW solar cells and
+ thermophotovoltaic absorbers. The saturable propagation still uses first-order depolarization, Lorentzian
+ lines and LO-phonon relaxation only. New alloys can be registered with add_material; the padding
+ material, the density-of-states mass, the depolarization permittivity and the LO-phonon parameters are
+ function arguments, so other III–V systems need only parameter sets and validation; interface and krpa
+ accept several polar-phonon modes and have been applied to a polar oxide, while nonpolar or strongly
+ anisotropic materials need new scattering models.
+
+
+ 8              Availability
+The version described here is release 0.6.1; its changes since 0.5.0 are listed in CHANGELOG.md. It requires
+Python ≥3.10, NumPy and SciPy (Matplotlib for figures). It installs with pip install . and is released
+under the MIT license. The source code, tests, documentation (a user guide with module reference and
+worked examples), the scripts that regenerate this paper’s figures and the design studies are supplied with this
+article; a public repository and an archived release with a persistent identifier will accompany publication.
+Contributions and issue reports are welcome under the guidelines in CONTRIBUTING.md.
+
+
+                                                                                            10
+References
+ [1] M. M. Fejer, S. J. B. Yoo, R. L. Byer, A. Harwit, and J. S. Harris, Jr. Observation of extremely large
+     quadratic susceptibility at 9.6–10.8 µm in electric-field-biased AlGaAs quantum wells. Phys. Rev. Lett.,
+     62:1041, 1989. doi: 10.1103/PhysRevLett.62.1041.
+
+ [2] E. Rosencher and Ph. Bois. Model system for optical nonlinearities: Asymmetric quantum wells. Phys.
+     Rev. B, 44:11315, 1991. doi: 10.1103/PhysRevB.44.11315.
+
+ [3] I. Vurgaftman, M. P. Lumb, and J. R. Meyer. Bands and Photons in III–V Semiconductor Quantum
+     Structures. Oxford University Press, Oxford, 2021. doi: 10.1093/oso/9780198767275.001.0001.
+
+ [4] M. A. Belkin, F. Capasso, A. Belyanin, D. L. Sivco, A. Y. Cho, D. C. Oakley, C. J. Vineis, and G. W.
+     Turner. Terahertz quantum-cascade-laser source based on intracavity difference-frequency generation.
+     Nat. Photonics, 1:288, 2007. doi: 10.1038/nphoton.2007.70.
+
+ [5] J. Lee, M. Tymchenko, C. Argyropoulos, P.-Y. Chen, F. Lu, F. Demmerle, G. Boehm, M.-C. Amann,
+     A. Alù, and M. A. Belkin. Giant nonlinear response from plasmonic metasurfaces coupled to intersub-
+     band transitions. Nature, 511:65, 2014. doi: 10.1038/nature13455.
+
+ [6] J. Yu, S. Park, I. Hwang, D. Kim, F. Demmerle, G. Boehm, M.-C. Amann, M. A. Belkin, and J. Lee.
+     Electrically tunable nonlinear polaritonic metasurface. Nat. Photonics, 16:72, 2022. doi: 10.1038/
+     s41566-021-00923-7.
+
+ [7] G. Chesi, V. Falcone, S. Calcaterra, M. Virgilio, and J. Frigerio. Modelling second harmonic generation
+     at mid-infrared frequencies in waveguide integrated Ge/SiGe quantum wells. Opt. Express, 31:17098,
+     2023. doi: 10.1364/OE.483888.
+
+ [8] G. Ownby. Electrically reversible asymmetric quantum wells for sign-reversal quasi-phase matching of
+     intersubband second-harmonic generation. Manuscript in preparation, 2026.
+
+ [9] S. Birner, T. Zibold, T. Andlauer, T. Kubis, M. Sabathil, A. Trellakis, and P. Vogl. nextnano: General
+     purpose 3-D simulations. IEEE Trans. Electron Devices, 54:2137, 2007.
+
+[10] H. Hebal, Z. Koziol, S. B. Lisesivdin, and R. Steed. General-purpose open-source 1D self-consistent
+     Schrödinger–Poisson solver: Aestimo 1D. Comput. Mater. Sci., 186, 2021. doi: 10.1016/j.commatsci.
+     2020.110015.
+
+[11] W. Beugeling, F. Bayer, C. Berger, J. Böttcher, L. Bovkun, C. Fuchs, M. Hofer, S. Shamim, M. Siebert,
+     L.-X. Wang, E. M. Hankiewicz, T. Kießling, H. Buhmann, and L. W. Molenkamp. kdotpy: k · p theory
+     on a lattice for simulating semiconductor band structures. SciPost Phys. Codebases, 47, 2025. doi:
+     10.21468/SciPostPhysCodeb.47.
+
+[12] Gmachl Group, Princeton University. ErwinJr2: a quantum cascade laser design tool. https:
+     //erwinjr2.readthedocs.io, 2026. Accessed 10 October 2026.
+
+[13] D. Alonso-Álvarez, T. Wilson, P. Pearce, M. Führer, D. Farrell, and N. Ekins-Daukes. Solcore: a
+     multi-scale, Python-based library for modelling solar cells and semiconductor materials. J. Comput.
+     Electron., 2018. doi: 10.1007/s10825-018-1171-3.
+
+                                                    11
+[14] B. Gaury, Y. Sun, P. Bermel, and P. M. Haney. Sesame: a 2-dimensional solar cell modeling tool. Sol.
+     Energy Mater. Sol. Cells, 198, 2019. doi: 10.1016/j.solmat.2019.03.037.
+
+[15] Scattering times for electrons in unbiased and biased single and multiple quantum wells. nextnano++
+     online tutorial, https://www.nextnano.com/docu/nextnanoplus/tutorials/1D_
+     electron_scattering_QW.html, 2026. Accessed 10 October 2026.
+
+[16] D. J. BenDaniel and C. B. Duke. Space-charge effects on electron tunneling. Phys. Rev., 152:683, 1966.
+     doi: 10.1103/PhysRev.152.683.
+
+[17] D. F. Nelson, R. C. Miller, and D. A. Kleinman. Band nonparabolicity effects in semiconductor quantum
+     wells. Phys. Rev. B, 35:7770, 1987. doi: 10.1103/PhysRevB.35.7770.
+
+[18] I. Vurgaftman, J. R. Meyer, and L. R. Ram-Mohan. Band parameters for III–V compound semiconduc-
+     tors and their alloys. J. Appl. Phys., 89:5815, 2001. doi: 10.1063/1.1368156.
+
+[19] P.-O. Löwdin. On the non-orthogonality problem connected with the use of atomic wave functions in
+     the theory of molecules and crystals. J. Chem. Phys., 18:365, 1950. doi: 10.1063/1.1747632.
+
+[20] T. Ando, A. B. Fowler, and F. Stern. Electronic properties of two-dimensional systems. Rev. Mod. Phys.,
+     54:437, 1982. doi: 10.1103/RevModPhys.54.437.
+
+[21] R. W. Boyd. Nonlinear Optics. Academic Press, Burlington, MA, 3rd edition, 2008.
+
+[22] R. Ferreira and G. Bastard. Evaluation of some scattering times for electrons in unbiased and biased
+     single- and multiple-quantum-well structures. Phys. Rev. B, 40:1074, 1989. doi: 10.1103/PhysRevB.40.
+     1074.
+
+[23] G. D. Pettit and W. J. Turner. Refractive index of InP. J. Appl. Phys., 36:2081, 1965. doi: 10.1063/1.
+     1714410.
+
+[24] M. A. Ordal, R. J. Bell, R. W. Alexander, Jr., L. L. Long, and M. R. Querry. Optical properties of
+     fourteen metals in the infrared and far infrared: Al, Co, Cu, Au, Fe, Pb, Mo, Ni, Pd, Pt, Ag, Ti, V, and
+     W. Appl. Opt., 24:4493, 1985. doi: 10.1364/AO.24.004493.
+
+[25] M. M. Fejer, G. A. Magel, D. H. Jundt, and R. L. Byer. Quasi-phase-matched second harmonic
+     generation: tuning and tolerances. IEEE J. Quantum Electron., 28:2631, 1992.
+
+[26] C. Sirtori, F. Capasso, J. Faist, and S. Scandolo. Nonparabolicity and a sum rule associated with
+     bound-to-bound and bound-to-continuum intersubband transitions in quantum wells. Phys. Rev. B, 50:
+     8663, 1994. doi: 10.1103/PhysRevB.50.8663.
+
+[27] G. Ownby. Rabi-frequency bound and saturation limits of resonant intersubband second-harmonic
+     generation in waveguides and thin films. Manuscript in preparation, 2026.
+
+[28] G. Ownby. Depolarization beyond energy shifts: pathway factors, multisubband coupling and dynamic
+     screening in resonant intersubband second-harmonic generation. Manuscript in preparation, 2026.
+
+[29] G. Ownby. Temperature limits of bias-switchable intersubband thermal emitters and their use in
+     low-temperature thermophotovoltaics. Manuscript in preparation, 2026.
+
+                                                     12
+[30] G. Ownby. Intersubband optics of the polar LaInO3 /BaSnO3 two-dimensional electron gas: frag-
+     mented hybrid plasmons, phonon-limited lifetimes, intrinsic second-order nonlinearity and the limits of
+     electrolyte gating. Manuscript in preparation, 2026.
+
+[31] G. Ownby. Where the gate charge must sit: electrostatic limits of electrolyte gating at the
+     LaInO3 /BaSnO3 interface and their intersubband signature. Manuscript in preparation, 2026.
+
+[32] G. Ownby. Implicit-differentiation sensitivities of a self-consistent intersubband model: uncertainty
+     quantification and growth-tolerant design of quantum-well second-harmonic generators. Manuscript in
+     preparation, 2026.
+
+
+
+
+                                                    13
+
