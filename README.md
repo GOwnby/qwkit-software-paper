@@ -1,4 +1,6 @@
-﻿# qwkit: an open, tested Python toolkit for quantum-well intersubband optics, from self-consistent states to saturated waveguide conversion
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23444551.svg)](https://doi.org/10.5281/zenodo.23444551)
+
+# qwkit: an open, tested Python toolkit for quantum-well intersubband optics, from self-consistent states to saturated waveguide conversion
 
 **Author:** Gracen Ownby (University of Oklahoma)  
 **Date:** October 2026  
