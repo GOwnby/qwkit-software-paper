@@ -28,7 +28,7 @@
 \title{qwkit: an open, tested Python toolkit for quantum-well intersubband optics, from self-consistent states to saturated waveguide conversion}
 \author{Gracen Ownby}
 \affil{University of Oklahoma, Norman, Oklahoma, USA}
-\date{\small 14 October 2026}
+\date{\small 20 October 2026}
 
 \begin{document}
 \maketitle
@@ -205,7 +205,10 @@ On one core of a 2.8~GHz Xeon, a self-consistent solution with seven states on a
 qwkit treats conduction-band ISB physics in one dimension with a single band; the two-band Kane states serve as a cross-check of the dipoles (and as an exact alternative, \code{core.kane\_dipoles}). The transport module is elastic and low-temperature (no phonon scattering). Three of the extensions planned at the first release are now included: thermal subband populations and linewidths for high-temperature ISB emitters (\code{thermal}), exact derivatives for gradient-based design under growth tolerances (\code{sens}), and a collective (multisubband-plasmon) response beyond first-order depolarization (\code{tdh}, \code{krpa}). The next planned extension is an interband and carrier-escape module (hole subbands, interband absorption, tunnelling and thermionic escape) for QW solar cells and thermophotovoltaic absorbers. The saturable propagation still uses first-order depolarization, Lorentzian lines and LO-phonon relaxation only. New alloys can be registered with \code{add\_material}; the padding material, the density-of-states mass, the depolarization permittivity and the LO-phonon parameters are function arguments, so other III--V systems need only parameter sets and validation; \code{interface} and \code{krpa} accept several polar-phonon modes and have been applied to a polar oxide, while nonpolar or strongly anisotropic materials need new scattering models.
 
 \section{Availability}
-The version described here is release 0.7.0; its changes since 0.5.0 are listed in \code{CHANGELOG.md}. It requires Python $\geq$3.10, NumPy and SciPy (Matplotlib for figures). It installs with \mbox{\code{pip install .}} and is released under the MIT license. The source code, tests, documentation (a user guide with module reference and worked examples), the scripts that regenerate this paper's figures and the design studies are supplied with this article; a public repository and an archived release with a persistent identifier will accompany publication. Contributions and issue reports are welcome under the guidelines in \code{CONTRIBUTING.md}.
+The version described here is release 0.7.0; its changes since 0.5.0 are listed in \code{CHANGELOG.md}. It requires Python $\geq$3.10, NumPy and SciPy (Matplotlib for figures). It installs with \mbox{\code{pip install .}} and is released under the MIT license. The source code, tests, documentation (a user guide with module reference and worked examples), the scripts that regenerate this paper's figures and the design studies are public (\url{https://github.com/GOwnby/qwkit}) and archived as stated below. Contributions and issue reports are welcome under the guidelines in \code{CONTRIBUTING.md}.
+
+\section*{Data and code availability}
+The \texttt{qwkit} software package (v0.7.0) is archived at \url{https://doi.org/10.5281/zenodo.23444120}. The simulation scripts, raw JSON datasets, and figure-generation code that reproduce every result in this study are permanently archived at \url{https://doi.org/10.5281/zenodo.23444550}.
 
 \bibliographystyle{unsrtnat}
 \bibliography{refs}

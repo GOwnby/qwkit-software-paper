@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23444551.svg)](https://doi.org/10.5281/zenodo.23444551)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23444550.svg)](https://doi.org/10.5281/zenodo.23444550)
 
 # qwkit: an open, tested Python toolkit for quantum-well intersubband optics, from self-consistent states to saturated waveguide conversion
 

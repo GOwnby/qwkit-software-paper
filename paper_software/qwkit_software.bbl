@@ -60,10 +60,12 @@ G.~Chesi, V.~Falcone, S.~Calcaterra, M.~Virgilio, and J.~Frigerio.
 \newblock \doi{10.1364/OE.483888}.
 
 \bibitem[Ownby(2026{\natexlab{a}})]{Ownby2026N1}
-G.~Ownby.
-\newblock Electrically reversible asymmetric quantum wells for sign-reversal
-  quasi-phase matching of intersubband second-harmonic generation.
-\newblock Manuscript in preparation, 2026{\natexlab{a}}.
+Gracen Ownby.
+\newblock {Electrically written quasi-phase matching of intersubband
+  second-harmonic generation: bias-reversed asymmetric and mirror-symmetric
+  quantum wells}.
+\newblock Zenodo, October 2026{\natexlab{a}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.23444557}.
 
 \bibitem[Birner et~al.(2007)Birner, Zibold, Andlauer, Kubis, Sabathil,
   Trellakis, and Vogl]{Birner2007}
@@ -199,62 +201,69 @@ C.~Sirtori, F.~Capasso, J.~Faist, and S.~Scandolo.
 \newblock \doi{10.1103/PhysRevB.50.8663}.
 
 \bibitem[Ownby(2026{\natexlab{b}})]{OwnbyMETH01}
-G.~Ownby.
-\newblock Dipoles of nonparabolic quantum-well states: why orthonormalizing the
-  bound states is not enough.
-\newblock Manuscript in preparation, 2026{\natexlab{b}}.
+Gracen Ownby.
+\newblock {Dipoles of nonparabolic quantum-well states: why orthonormalizing
+  the bound states is not enough}.
+\newblock Zenodo, October 2026{\natexlab{b}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.23444554}.
 
 \bibitem[Ownby(2026{\natexlab{c}})]{OwnbyNL02}
-G.~Ownby.
-\newblock Rabi-frequency bound and saturation limits of resonant intersubband
-  second-harmonic generation in waveguides and thin films.
-\newblock Manuscript in preparation, 2026{\natexlab{c}}.
+Gracen Ownby.
+\newblock {Rabi-frequency bound and saturation limits of resonant intersubband
+  second-harmonic generation in waveguides and thin films}.
+\newblock Zenodo, October 2026{\natexlab{c}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.23444562}.
 
 \bibitem[Ownby(2026{\natexlab{d}})]{OwnbyNL05}
-G.~Ownby.
-\newblock Depolarization beyond energy shifts: pathway factors, multisubband
+Gracen Ownby.
+\newblock {Depolarization beyond energy shifts: pathway factors, multisubband
   coupling and dynamic screening in resonant intersubband second-harmonic
-  generation.
-\newblock Manuscript in preparation, 2026{\natexlab{d}}.
+  generation}.
+\newblock Zenodo, October 2026{\natexlab{d}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.23444568}.
 
 \bibitem[Ownby(2026{\natexlab{e}})]{OwnbyTPV05}
-G.~Ownby.
-\newblock Temperature limits of bias-switchable intersubband thermal emitters
-  and their use in low-temperature thermophotovoltaics.
-\newblock Manuscript in preparation, 2026{\natexlab{e}}.
+Gracen Ownby.
+\newblock {Temperature limits of bias-switchable intersubband thermal emitters
+  and their use in low-temperature thermophotovoltaics}.
+\newblock Zenodo, October 2026{\natexlab{e}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.23444576}.
 
 \bibitem[Ownby(2026{\natexlab{f}})]{OwnbyMAT01}
-G.~Ownby.
-\newblock Intersubband optics of the polar {LaInO$_3$/BaSnO$_3$}
-  two-dimensional electron gas: fragmented hybrid plasmons, phonon-limited
-  lifetimes, intrinsic second-order nonlinearity and the limits of electrolyte
-  gating.
-\newblock Manuscript in preparation, 2026{\natexlab{f}}.
+Gracen Ownby.
+\newblock {Intersubband optics of the polar LaInO3/BaSnO3 two-dimensional
+  electron gas: fragmented hybrid plasmons, phonon-limited lifetimes, intrinsic
+  second-order nonlinearity and the limits of electrolyte gating}.
+\newblock Zenodo, October 2026{\natexlab{f}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.23444579}.
 
 \bibitem[Ownby(2026{\natexlab{g}})]{OwnbyMAT02}
-G.~Ownby.
-\newblock Where the gate charge must sit: electrostatic limits of electrolyte
-  gating at the {LaInO$_3$/BaSnO$_3$} interface and their intersubband
-  signature.
-\newblock Manuscript in preparation, 2026{\natexlab{g}}.
+Gracen Ownby.
+\newblock {Where the gate charge must sit: electrostatic limits of electrolyte
+  gating at the LaInO3/BaSnO3 interface and their intersubband signature}.
+\newblock Zenodo, October 2026{\natexlab{g}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.23444585}.
 
 \bibitem[Ownby(2026{\natexlab{h}})]{OwnbyMAT03}
-G.~Ownby.
-\newblock Immobile electrons at frozen gate charge: what the transport data of
-  electrolyte-gated {LaInO$_3$/BaSnO$_3$} allow.
-\newblock Manuscript in preparation, 2026{\natexlab{h}}.
+Gracen Ownby.
+\newblock {Immobile electrons at frozen gate charge: what the transport data of
+  electrolyte-gated LaInO3/BaSnO3 allow}.
+\newblock Zenodo, October 2026{\natexlab{h}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.23444587}.
 
 \bibitem[Ownby(2026{\natexlab{i}})]{OwnbyMS02}
-G.~Ownby.
-\newblock Implicit-differentiation sensitivities of a self-consistent
+Gracen Ownby.
+\newblock {Implicit-differentiation sensitivities of a self-consistent
   intersubband model: uncertainty quantification and growth-tolerant design of
-  quantum-well second-harmonic generators.
-\newblock Manuscript in preparation, 2026{\natexlab{i}}.
+  quantum-well second-harmonic generators}.
+\newblock Zenodo, October 2026{\natexlab{i}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.23444574}.
 
 \bibitem[Ownby(2026{\natexlab{j}})]{OwnbyN2}
-G.~Ownby.
-\newblock Electrically programmable intersubband second-harmonic gratings:
-  synthesis under saturation, fringing fields and tuning.
-\newblock Manuscript in preparation, 2026{\natexlab{j}}.
+Gracen Ownby.
+\newblock {Electrically programmable intersubband second-harmonic gratings:
+  synthesis under saturation, fringing fields and tuning}.
+\newblock Zenodo, October 2026{\natexlab{j}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.23444591}.
 
 \end{thebibliography}
